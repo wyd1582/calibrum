@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+.pnpm-store/
+# builds
+dist/
+.next/
+out-web/
+coverage/
+*.tsbuildinfo
+# python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+# data (downloaded via make targets; fixtures are committed under engine/fixtures)
+/data/
+engine/**/data/
+# scratch
+*.log
+.DS_Store
+.env*

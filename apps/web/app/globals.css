@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --color-gauge: #0a1428;
+  --color-panel: #111b33;
+  --color-panel2: #0e1830;
+  --color-line: #24365a;
+  --color-ink: #eaf0fb;
+  --color-dim: #8fa3c4;
+  --color-dimmer: #5b6e92;
+  --color-violet: #8b7cf6;
+  --color-violet2: #6d5ef0;
+  --color-cyan: #38bdf8;
+  --color-good: #34d399;
+  --color-amber: #f0a05a;
+  --color-bad: #f87171;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html {
+  color-scheme: dark;
+  background: var(--color-gauge);
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(1200px 600px at 15% -10%, #16254a 0%, var(--color-gauge) 55%);
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-feature-settings: "tnum" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* calibration-tick divider: the logo's tick motif as a horizontal rule */
+.tick-rule {
+  height: 10px;
+  background-image: repeating-linear-gradient(90deg, var(--color-line) 0 2px, transparent 2px 14px), linear-gradient(90deg, transparent, transparent);
+  position: relative;
+}
+.tick-rule::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  width: 3px;
+  height: 18px;
+  background: var(--color-violet);
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(139, 124, 246, 0.6);
+}
+
+input[type="range"] {
+  accent-color: var(--color-violet);
+  width: 100%;
+}
+
+::selection {
+  background: rgba(139, 124, 246, 0.35);
+}
+
+@keyframes ringspin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ring-loader {
+  animation: ringspin 1.6s linear infinite;
+}

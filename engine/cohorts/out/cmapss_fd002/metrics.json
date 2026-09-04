@@ -1,0 +1,30 @@
+{
+  "dataset": "NASA C-MAPSS FD002 (simulation benchmark; 6 operating conditions, 1 fault mode)",
+  "machines_train": 182,
+  "machines_holdout": 78,
+  "rows_holdout": 14243,
+  "events_holdout": 2418,
+  "event": "failure within next 30 cycles",
+  "auc": 0.9856,
+  "gini": 0.9711,
+  "ks": 0.8683,
+  "top20_capture": 0.916,
+  "top10_capture": 0.579,
+  "ablations": {
+    "full": {
+      "auc": 0.9856,
+      "cap20": 0.916,
+      "n_features": 43
+    },
+    "hours_only": {
+      "auc": 0.881,
+      "cap20": 0.5993,
+      "n_features": 1
+    },
+    "sensors_only": {
+      "auc": 0.9847,
+      "cap20": 0.9119,
+      "n_features": 42
+    }
+  }
+}

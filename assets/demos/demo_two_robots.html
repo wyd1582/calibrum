@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two Robots — Machine Credit Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1428; --panel:#111B33; --panel2:#0E1830; --line:#24365A;
+    --ink:#EAF0FB; --dim:#8FA3C4; --dimmer:#5B6E92;
+    --a:#38BDF8; --b:#F0A05A; --good:#34D399; --bad:#F87171; --violet:#8B7CF6;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{background:var(--bg); color:var(--ink);
+    font-family:'Space Grotesk', system-ui, sans-serif; font-size:15px; line-height:1.5}
+  .wrap{max-width:1180px; margin:0 auto; padding:28px 28px 48px}
+  header{display:flex; justify-content:space-between; align-items:baseline;
+    border-bottom:1px solid var(--line); padding-bottom:14px}
+  .wordmark{font-weight:700; letter-spacing:.02em}
+  .wordmark span{color:var(--violet)}
+  header em{color:var(--dimmer); font-style:normal; font-size:.85rem}
+
+  .hero{padding:34px 0 22px; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap}
+  h1{font-size:clamp(1.6rem,3.4vw,2.5rem); font-weight:700; line-height:1.12; max-width:640px}
+  h1 b{color:var(--a); font-weight:700}
+  h1 i{color:var(--b); font-style:normal; font-weight:700}
+  .hero p{color:var(--dim); margin-top:10px; max-width:560px}
+
+  .controls{display:flex; align-items:center; gap:14px; background:var(--panel);
+    border:1px solid var(--line); border-radius:12px; padding:12px 16px}
+  button.play{width:44px; height:44px; border-radius:50%; border:1px solid var(--a);
+    background:transparent; color:var(--a); font-size:1rem; cursor:pointer}
+  button.play:hover{background:rgba(56,189,248,.12)}
+  button.play:focus-visible,input:focus-visible{outline:2px solid var(--a); outline-offset:2px}
+  .month{font-variant-numeric:tabular-nums; min-width:86px; text-align:center}
+  .month strong{font-size:1.3rem}
+  .month small{display:block; color:var(--dim); font-size:.75rem}
+  input[type=range]{width:220px; accent-color:#38BDF8}
+
+  .grid{display:grid; grid-template-columns:300px 1fr 300px; gap:18px; margin-top:8px}
+  @media(max-width:980px){.grid{grid-template-columns:1fr} .chartcard{order:-1}}
+
+  .passport{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px}
+  .passport.a{border-top:3px solid var(--a)} .passport.b{border-top:3px solid var(--b)}
+  .passport h2{font-size:1.05rem; font-weight:600}
+  .passport .sub{color:var(--dim); font-size:.82rem; margin:2px 0 12px}
+  .scorebox{display:flex; align-items:baseline; gap:8px; margin:6px 0 2px}
+  .score{font-size:2.6rem; font-weight:700; font-variant-numeric:tabular-nums; transition:color .3s}
+  .score.up{color:var(--good)} .score.down{color:var(--bad)}
+  .scorelabel{color:var(--dim); font-size:.8rem}
+  .delta{font-size:.85rem; font-variant-numeric:tabular-nums}
+  .delta.up{color:var(--good)} .delta.down{color:var(--bad)}
+
+  .quotes{margin-top:12px; border-top:1px solid var(--line)}
+  .q{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--line); font-size:.9rem}
+  .q span{color:var(--dim)} .q strong{font-variant-numeric:tabular-nums; font-weight:600}
+
+  .feed{margin-top:12px}
+  .feed h3{font-size:.8rem; color:var(--dim); font-weight:500; margin-bottom:6px}
+  .evt{font-size:.8rem; padding:6px 8px; border-left:2px solid var(--line); margin-bottom:6px; color:var(--dim);
+    background:var(--panel2); border-radius:0 6px 6px 0}
+  .evt.fresh{border-left-color:var(--violet); color:var(--ink)}
+  .evt .m{color:var(--dimmer); margin-right:6px; font-variant-numeric:tabular-nums}
+  .evt .sig{display:block; color:var(--dimmer); font-size:.7rem; margin-top:2px}
+  .evt.neg{border-left-color:var(--bad)} .evt.pos.fresh{border-left-color:var(--good)}
+
+  .chartcard{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; display:flex; flex-direction:column}
+  .chartcard h2{font-size:1rem; font-weight:600}
+  .chartcard .sub{color:var(--dim); font-size:.82rem; margin-bottom:8px}
+  svg{width:100%; height:auto}
+  .divergence{margin-top:auto; padding-top:12px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap}
+  .divergence span{color:var(--dim); font-size:.85rem}
+  .divergence strong{font-size:1.15rem; font-variant-numeric:tabular-nums; color:var(--violet)}
+
+  footer{margin-top:26px; color:var(--dim); font-size:.85rem; border-top:1px solid var(--line); padding-top:14px;
+    display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+  footer b{color:var(--ink); font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="wordmark">Machine <span>Credit</span> Network</div>
+    <em>Interactive model — illustrative, not a rate filing</em>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>Two identical robots.<br>Two different prices of capital.</h1>
+      <p>Same OEM, same model, same warehouse. Drag through 24 months of signed operating
+         receipts and watch verified history split their insurance, leverage and resale value apart.</p>
+    </div>
+    <div class="controls" role="group" aria-label="Timeline controls">
+      <button class="play" id="play" aria-label="Play timeline">▶</button>
+      <div class="month"><strong id="mLabel">0</strong><small>months elapsed</small></div>
+      <input type="range" id="scrub" min="0" max="24" value="0" step="1" aria-label="Scrub months">
+    </div>
+  </div>
+
+  <div class="grid">
+    <section class="passport a" id="cardA">
+      <h2>Robot A-7741</h2>
+      <div class="sub">Warehouse AMR · commissioned month 0 · asset value $85,000</div>
+      <div class="scorebox">
+        <div class="score" id="scoreA">650</div>
+        <div><div class="scorelabel">Machine Risk Score</div><div class="delta" id="deltaA"></div></div>
+      </div>
+      <div class="quotes">
+        <div class="q"><span>Insurance premium</span><strong id="premA">—</strong></div>
+        <div class="q"><span>Max loan-to-value</span><strong id="ltvA">—</strong></div>
+        <div class="q"><span>Credit spread</span><strong id="sprA">—</strong></div>
+        <div class="q"><span>Residual value est.</span><strong id="resA">—</strong></div>
+      </div>
+      <div class="feed"><h3>Signed operating receipts</h3><div id="feedA"></div></div>
+    </section>
+
+    <section class="chartcard">
+      <h2>Machine Risk Score over time</h2>
+      <div class="sub">Both machines start unrated at 650. Evidence does the rest.</div>
+      <svg id="chart" viewBox="0 0 560 330" role="img" aria-label="Line chart of two Machine Risk Scores diverging over 24 months"></svg>
+      <div class="divergence">
+        <span>Capital-cost gap between the two machines</span>
+        <strong id="gap">$0 / yr</strong>
+      </div>
+    </section>
+
+    <section class="passport b" id="cardB">
+      <h2>Robot B-7742</h2>
+      <div class="sub">Warehouse AMR · commissioned month 0 · asset value $85,000</div>
+      <div class="scorebox">
+        <div class="score" id="scoreB">650</div>
+        <div><div class="scorelabel">Machine Risk Score</div><div class="delta" id="deltaB"></div></div>
+      </div>
+      <div class="quotes">
+        <div class="q"><span>Insurance premium</span><strong id="premB">—</strong></div>
+        <div class="q"><span>Max loan-to-value</span><strong id="ltvB">—</strong></div>
+        <div class="q"><span>Credit spread</span><strong id="sprB">—</strong></div>
+        <div class="q"><span>Residual value est.</span><strong id="resB">—</strong></div>
+      </div>
+      <div class="feed"><h3>Signed operating receipts</h3><div id="feedB"></div></div>
+    </section>
+  </div>
+
+  <footer>
+    <div><b>Proof of Operation → reputation → credit → capital.</b>
+      Every receipt above is hardware-signed and independently verifiable; no party has to be believed.</div>
+    <div>Quotes are a simplified pricing function of MRS for demonstration.</div>
+  </footer>
+</div>
+
+<script>
+// ---------- event scripts ----------
+const evA = [
+  {m:2,  t:"Preventive maintenance completed on schedule", d:+9,  k:"pos"},
+  {m:4,  t:"1,000 verified operating hours, zero interventions", d:+14, k:"pos"},
+  {m:6,  t:"Preventive maintenance completed on schedule", d:+9,  k:"pos"},
+  {m:8,  t:"Battery degradation below fleet median", d:+11, k:"pos"},
+  {m:10, t:"Preventive maintenance completed on schedule", d:+8,  k:"pos"},
+  {m:12, t:"3,600 verified hours, zero collision events", d:+16, k:"pos"},
+  {m:14, t:"Firmware v7.3 applied within compliance window", d:+7,  k:"pos"},
+  {m:16, t:"Preventive maintenance completed on schedule", d:+8,  k:"pos"},
+  {m:18, t:"Vibration signature stable vs. fleet baseline", d:+12, k:"pos"},
+  {m:20, t:"6,200 verified hours, zero incidents", d:+15, k:"pos"},
+  {m:22, t:"Preventive maintenance completed on schedule", d:+8,  k:"pos"},
+  {m:24, t:"Insurer renewal at improved tier", d:+15, k:"pos"},
+];
+const evB = [
+  {m:2,  t:"Preventive maintenance completed on schedule", d:+9,  k:"pos"},
+  {m:4,  t:"Collision — rack impact, minor chassis damage", d:-58, k:"neg"},
+  {m:6,  t:"Scheduled maintenance missed (14 days overdue)", d:-24, k:"neg"},
+  {m:9,  t:"Joint actuator replaced after fault codes", d:-38, k:"neg"},
+  {m:11, t:"Utilization resumed, no further faults", d:+10, k:"pos"},
+  {m:13, t:"Collision — human intervention required", d:-52, k:"neg"},
+  {m:15, t:"Unplanned downtime 31 hours", d:-27, k:"neg"},
+  {m:17, t:"Maintenance completed after insurer notice", d:+6,  k:"pos"},
+  {m:19, t:"Scheduled maintenance missed (9 days overdue)", d:-19, k:"neg"},
+  {m:21, t:"Collision — conveyor strike, claim filed", d:-46, k:"neg"},
+  {m:23, t:"Vibration anomaly flagged on left drive motor", d:-18, k:"neg"},
+];
+function sig(seed){ // deterministic pseudo-hash for flavor
+  let h=0; const s=String(seed);
+  for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))>>>0;}
+  return "poo:"+h.toString(16).slice(0,4)+"…"+((h*2654435761)>>>0).toString(16).slice(0,4);
+}
+// ---------- score paths ----------
+function path(events){
+  const arr=[650]; let s=650;
+  for(let m=1;m<=24;m++){
+    const e=events.find(x=>x.m===m);
+    if(e) s+=e.d; else s+=(events===evA?1:-1)*0; // drift none
+    s=Math.max(300,Math.min(850,s));
+    arr.push(s);
+  }
+  return arr;
+}
+const A=path(evA), B=path(evB);
+
+// ---------- pricing ----------
+const VAL=85000;
+const prem = mrs => VAL*(0.08 - (mrs/1000)*0.07);          // $/yr
+const ltv  = mrs => 25 + (mrs/1000)*55;                     // %
+const spr  = mrs => Math.round(1200 - mrs);                 // bps
+const res  = mrs => 30 + (mrs/1000)*40;                     // %
+const fmt$ = v => "$"+Math.round(v).toLocaleString();
+
+// ---------- chart ----------
+const svg=document.getElementById('chart');
+const W=560,H=330,PL=42,PR=14,PT=14,PB=28;
+const X=m=>PL+(W-PL-PR)*m/24, Y=s=>PT+(H-PT-PB)*(1-(s-300)/(850-300));
+function grid(){
+  let g='';
+  [300,450,600,750,850].forEach(v=>{
+    g+=`<line x1="${PL}" y1="${Y(v)}" x2="${W-PR}" y2="${Y(v)}" stroke="#1B2B4D" stroke-width="1"/>`;
+    g+=`<text x="${PL-8}" y="${Y(v)+4}" fill="#5B6E92" font-size="11" text-anchor="end">${v}</text>`;
+  });
+  [0,6,12,18,24].forEach(m=>{
+    g+=`<text x="${X(m)}" y="${H-8}" fill="#5B6E92" font-size="11" text-anchor="middle">${m}m</text>`;
+  });
+  return g;
+}
+function line(data,upto,color){
+  let d='';
+  for(let m=0;m<=upto;m++){d+=(m?'L':'M')+X(m)+','+Y(data[m])+' ';}
+  return `<path d="${d}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/>`+
+    `<circle cx="${X(upto)}" cy="${Y(data[upto])}" r="4.5" fill="${color}"/>`;
+}
+// ---------- render ----------
+const $=id=>document.getElementById(id);
+let prevA=650, prevB=650;
+function render(m){
+  $('mLabel').textContent=m;
+  const a=A[m], b=B[m];
+  $('scoreA').textContent=a; $('scoreB').textContent=b;
+  $('scoreA').className='score '+(a>=prevA?'up':'down');
+  $('scoreB').className='score '+(b>=prevB?'up':'down');
+  $('deltaA').textContent=(a-650>=0?'+':'')+(a-650)+' since month 0';
+  $('deltaA').className='delta '+(a>=650?'up':'down');
+  $('deltaB').textContent=(b-650>=0?'+':'')+(b-650)+' since month 0';
+  $('deltaB').className='delta '+(b>=650?'up':'down');
+  prevA=a; prevB=b;
+
+  $('premA').textContent=fmt$(prem(a))+" / yr";
+  $('premB').textContent=fmt$(prem(b))+" / yr";
+  $('ltvA').textContent=Math.round(ltv(a))+"%";
+  $('ltvB').textContent=Math.round(ltv(b))+"%";
+  $('sprA').textContent="SOFR + "+spr(a)+" bps";
+  $('sprB').textContent="SOFR + "+spr(b)+" bps";
+  $('resA').textContent=Math.round(res(a))+"% of cost";
+  $('resB').textContent=Math.round(res(b))+"% of cost";
+
+  const debt=VAL*0.6;
+  const gap=(prem(b)-prem(a)) + debt*((spr(b)-spr(a))/10000);
+  $('gap').textContent=fmt$(gap)+" / yr";
+
+  svg.innerHTML=grid()+line(A,m,'#38BDF8')+line(B,m,'#F0A05A')+
+    `<text x="${W-PR}" y="${Y(A[m])-10}" fill="#38BDF8" font-size="12" text-anchor="end" font-weight="600">A ${A[m]}</text>`+
+    `<text x="${W-PR}" y="${Y(B[m])+18}" fill="#F0A05A" font-size="12" text-anchor="end" font-weight="600">B ${B[m]}</text>`;
+
+  feed('feedA',evA,m); feed('feedB',evB,m);
+}
+function feed(id,events,m){
+  const el=$(id); el.innerHTML='';
+  const seen=events.filter(e=>e.m<=m).slice(-3).reverse();
+  if(!seen.length){el.innerHTML='<div class="evt">No receipts yet — machine unrated at 650.</div>';return;}
+  seen.forEach((e,i)=>{
+    const div=document.createElement('div');
+    div.className='evt '+e.k+(i===0?' fresh':'');
+    div.innerHTML=`<span class="m">m${e.m}</span>${e.t} <span style="color:${e.d>=0?'#34D399':'#F87171'}">(${e.d>=0?'+':''}${e.d})</span><span class="sig">signed ${sig(id+e.m+e.t)}</span>`;
+    el.appendChild(div);
+  });
+}
+// ---------- controls ----------
+const scrub=$('scrub'), play=$('play');
+let timer=null;
+scrub.addEventListener('input',()=>render(+scrub.value));
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+play.addEventListener('click',()=>{
+  if(timer){clearInterval(timer);timer=null;play.textContent='▶';play.setAttribute('aria-label','Play timeline');return;}
+  if(+scrub.value>=24) scrub.value=0;
+  play.textContent='⏸'; play.setAttribute('aria-label','Pause timeline');
+  timer=setInterval(()=>{
+    let v=+scrub.value+1;
+    if(v>24){clearInterval(timer);timer=null;play.textContent='▶';return;}
+    scrub.value=v; render(v);
+  }, reduced?900:600);
+});
+render(0);
+</script>
+</body>
+</html>

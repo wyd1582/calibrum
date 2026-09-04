@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Underwriting Desk — Machine Credit Network</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1428; --panel:#111B33; --panel2:#0E1830; --line:#24365A;
+    --ink:#EAF0FB; --dim:#8FA3C4; --dimmer:#5B6E92;
+    --cyan:#38BDF8; --good:#34D399; --bad:#F87171; --violet:#8B7CF6; --amber:#F0A05A; --lime:#A3E635;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html,body{background:var(--bg); color:var(--ink);
+    font-family:'Space Grotesk', system-ui, sans-serif; font-size:15px; line-height:1.5}
+  .wrap{max-width:1080px; margin:0 auto; padding:26px 24px 60px}
+  header{display:flex; justify-content:space-between; align-items:center;
+    border-bottom:1px solid var(--line); padding-bottom:12px; gap:14px; flex-wrap:wrap}
+  .wordmark{font-weight:700} .wordmark span{color:var(--violet)}
+  .balance{background:var(--panel); border:1px solid var(--line); border-radius:999px;
+    padding:8px 16px; display:flex; align-items:center; gap:8px; font-variant-numeric:tabular-nums}
+  .coin{width:18px; height:18px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #A3E635, #4d7c0f);
+    display:inline-block; box-shadow:0 0 8px rgba(163,230,53,.5)}
+  .balance strong{font-size:1.05rem}
+  .balance small{color:var(--dim)}
+
+  .stage{margin-top:26px}
+  h1{font-size:clamp(1.5rem,3vw,2.2rem); font-weight:700; line-height:1.15}
+  .lede{color:var(--dim); margin-top:10px; max-width:640px}
+  .cta{margin-top:22px; display:inline-block; background:var(--cyan); color:#06121F; border:none;
+    font:inherit; font-weight:700; padding:12px 26px; border-radius:10px; cursor:pointer}
+  .cta:hover{filter:brightness(1.1)}
+  .cta:focus-visible,button:focus-visible{outline:2px solid var(--cyan); outline-offset:2px}
+  .cta.ghost{background:transparent; color:var(--cyan); border:1px solid var(--cyan)}
+
+  .roundhead{display:flex; justify-content:space-between; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px}
+  .roundhead h2{font-size:1.3rem}
+  .roundhead .tag{color:var(--dim); font-size:.9rem}
+  .hint{color:var(--dim); margin-bottom:16px; max-width:700px}
+  .hint b{color:var(--ink)}
+
+  .book{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+  @media(max-width:900px){.book{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.book{grid-template-columns:1fr}}
+  .mach{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px; position:relative}
+  .mach h3{font-size:.95rem; font-weight:600}
+  .mach .meta{color:var(--dim); font-size:.78rem; margin:2px 0 10px; min-height:2.2em}
+  .mrs{display:flex; align-items:baseline; gap:6px; margin-bottom:8px}
+  .mrs strong{font-size:1.5rem; font-variant-numeric:tabular-nums}
+  .mrs small{color:var(--dim); font-size:.72rem}
+  .mrs.hi strong{color:var(--good)} .mrs.mid strong{color:var(--amber)} .mrs.lo strong{color:var(--bad)}
+  .mrs.hidden strong{color:var(--dimmer); letter-spacing:.1em}
+  .premline{font-size:.82rem; color:var(--dim); margin-bottom:10px; font-variant-numeric:tabular-nums}
+  .premline b{color:var(--ink)}
+  .acts{display:flex; gap:8px}
+  .acts button{flex:1; font:inherit; font-size:.82rem; font-weight:600; padding:8px 0; border-radius:8px; cursor:pointer;
+    border:1px solid var(--line); background:var(--panel2); color:var(--ink)}
+  .acts button.ins{border-color:var(--cyan); color:var(--cyan)}
+  .acts button.ins:hover{background:rgba(56,189,248,.12)}
+  .acts button.pass:hover{background:rgba(143,163,196,.12)}
+  .mach.insured{border-color:var(--cyan)}
+  .mach.passed{opacity:.45}
+  .mach .stamp{position:absolute; top:10px; right:12px; font-size:.7rem; font-weight:700; letter-spacing:.05em}
+  .mach.insured .stamp{color:var(--cyan)} .mach.passed .stamp{color:var(--dimmer)}
+  .mach .outcome{margin-top:10px; border-top:1px dashed var(--line); padding-top:8px; font-size:.8rem; min-height:2.4em}
+  .outcome .claim{color:var(--bad); font-weight:600}
+  .outcome .clean{color:var(--good); font-weight:600}
+
+  .runbar{margin-top:18px; display:flex; align-items:center; gap:16px; flex-wrap:wrap}
+  .runbar .note{color:var(--dim); font-size:.85rem}
+
+  .ledger{margin-top:18px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px; text-align:center}
+  @media(max-width:700px){.ledger{grid-template-columns:repeat(2,1fr)}}
+  .ledger div span{display:block; color:var(--dim); font-size:.78rem}
+  .ledger div strong{font-size:1.25rem; font-variant-numeric:tabular-nums}
+  .lr-good{color:var(--good)} .lr-bad{color:var(--bad)}
+
+  .final{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:20px}
+  @media(max-width:700px){.final{grid-template-columns:1fr}}
+  .fcard{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px; text-align:center}
+  .fcard h3{font-size:.95rem; color:var(--dim); font-weight:500}
+  .fcard .big{font-size:2.6rem; font-weight:700; margin:6px 0; font-variant-numeric:tabular-nums}
+  .fcard .sub{color:var(--dim); font-size:.85rem}
+  .fcard.win{border-color:var(--good)}
+  .verdict{margin-top:22px; background:var(--panel2); border-left:3px solid var(--violet);
+    padding:16px 18px; border-radius:0 12px 12px 0; max-width:760px}
+  .verdict b{color:var(--violet)}
+  .hiddenview{display:none}
+  footer{margin-top:34px; color:var(--dimmer); font-size:.8rem; border-top:1px solid var(--line); padding-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="wordmark">Machine <span>Credit</span> Network — The Underwriting Desk</div>
+    <div class="balance"><span class="coin"></span><strong id="bal">100,000</strong><small>vUSDC</small></div>
+  </header>
+
+  <!-- INTRO -->
+  <section class="stage" id="intro">
+    <h1>You run a robot insurance desk.<br>Play a year of it.</h1>
+    <p class="lede">Eight warehouse robots want coverage. Insure a machine and you collect its premium;
+      if it fails during the year, you pay the repair claim. You'll underwrite two books —
+      first the way the industry prices today, then with Machine Risk Scores. Same market, same desk.
+      Your job: end the year with a loss ratio under 100%.</p>
+    <button class="cta" id="start">Open the desk</button>
+  </section>
+
+  <!-- ROUND VIEW -->
+  <section class="stage hiddenview" id="round">
+    <div class="roundhead">
+      <h2 id="rTitle">Book 1 — priced blind</h2>
+      <div class="tag" id="rTag"></div>
+    </div>
+    <p class="hint" id="rHint"></p>
+    <div class="book" id="book"></div>
+    <div class="runbar">
+      <button class="cta" id="run" disabled>Run 12 months</button>
+      <span class="note" id="runNote">Decide on all eight machines first.</span>
+    </div>
+    <div class="ledger hiddenview" id="ledger">
+      <div><span>Premiums collected</span><strong id="lPrem">—</strong></div>
+      <div><span>Claims paid</span><strong id="lClaim">—</strong></div>
+      <div><span>Underwriting result</span><strong id="lPnl">—</strong></div>
+      <div><span>Loss ratio</span><strong id="lLR">—</strong></div>
+    </div>
+    <div class="runbar hiddenview" id="nextbar">
+      <button class="cta" id="next">Continue</button>
+    </div>
+  </section>
+
+  <!-- FINAL -->
+  <section class="stage hiddenview" id="final">
+    <h1>Same desk. Same market. One difference.</h1>
+    <div class="final">
+      <div class="fcard" id="fc1">
+        <h3>Book 1 — priced blind</h3>
+        <div class="big" id="f1lr">—</div>
+        <div class="sub">loss ratio · <span id="f1pnl"></span></div>
+      </div>
+      <div class="fcard" id="fc2">
+        <h3>Book 2 — priced on MRS</h3>
+        <div class="big" id="f2lr">—</div>
+        <div class="sub">loss ratio · <span id="f2pnl"></span></div>
+      </div>
+    </div>
+    <div class="verdict">
+      <b>That gap is the product.</b> The machines didn't change — the information did.
+      A verifiable Machine Risk Score lets the desk decline the risks it can see,
+      price the ones it keeps, and charge good machines less while making more.
+      Scale this desk to every insurer, lender and lessor in the machine economy,
+      and the score becomes the reference rate machine capital is priced against.
+    </div>
+    <div class="runbar">
+      <button class="cta ghost" id="replay">Play again</button>
+    </div>
+  </section>
+
+  <footer>Illustrative simulation with randomized outcomes; risk distributions, premiums and claims are simplified for demonstration. vUSDC is play money.</footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const fmt=v=>Math.round(v).toLocaleString();
+let balance=100000;
+function setBal(){$('bal').textContent=fmt(balance);}
+
+// ---- machine generator ----
+const NAMES=["AX-11","AX-12","KR-2","KR-7","VT-31","VT-40","MQ-5","MQ-8","LX-3","LX-9","RB-21","RB-24","ZT-6","ZT-7","HV-14","HV-18"];
+const TASKS=["pallet transport","case picking","tote shuttle","dock loading"];
+function mulberry(seed){return function(){let t=seed+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;}}
+let rng=mulberry(Date.now()%100000);
+
+function makeBook(offset){
+  // fixed MRS mix so the lesson holds: 3 good, 3 mid, 2 toxic — shuffled
+  const mix=[810,780,750,660,635,610,455,415];
+  for(let i=mix.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mix[i],mix[j]]=[mix[j],mix[i]];}
+  return mix.map((mrs,i)=>({
+    id:i, name:NAMES[offset+i], task:TASKS[Math.floor(rng()*TASKS.length)],
+    age:(1+Math.floor(rng()*4)), mrs,
+    decision:null, claim:0
+  }));
+}
+// expected annual claim cost given MRS (hidden ground truth)
+function simulateClaim(m){
+  const pFail=Math.min(.95,Math.max(.05,(1000-m.mrs)/1000*1.6-.30));
+  let cost=0;
+  if(rng()<pFail){cost+=5000+rng()*11000; if(rng()<pFail*.7)cost+=4000+rng()*10000;}
+  return Math.round(cost);
+}
+const FLAT=2400;                             // status-quo flat premium
+const scored=mrs=>Math.round(85000*(0.090-(mrs/1000)*0.075)); // MRS-based premium
+
+// ---- round state ----
+let phase=1, book=null, results={};
+
+function tier(mrs){return mrs>=700?'hi':mrs>=550?'mid':'lo';}
+
+function renderBook(){
+  const blind=(phase===1);
+  $('rTitle').textContent=blind?'Book 1 — priced blind':'Book 2 — priced on MRS';
+  $('rTag').textContent=blind?'the industry today':'the desk with our product';
+  $('rHint').innerHTML=blind
+    ?'All you have is the brochure: model, task, age. Every machine quotes the same flat premium of <b>2,400 vUSDC</b> — because without verified history, that\'s all an underwriter can do. Insure or pass on each.'
+    :'Same market, new book — but now each machine carries a verified <b>Machine Risk Score</b>, and premiums are priced from it. Good machines got cheaper; risky ones got expensive. Choose again.';
+  const el=$('book'); el.innerHTML='';
+  book.forEach(m=>{
+    const prem=blind?FLAT:scored(m.mrs);
+    m.premium=prem;
+    const d=document.createElement('div');
+    d.className='mach'; d.id='m'+m.id;
+    d.innerHTML=`
+      <div class="stamp"></div>
+      <h3>Robot ${m.name}</h3>
+      <div class="meta">${m.task} · ${m.age} yr in service · $85K asset</div>
+      <div class="mrs ${blind?'hidden':tier(m.mrs)}">
+        <strong>${blind?'???':m.mrs}</strong><small>Machine Risk Score${blind?' — unavailable':''}</small>
+      </div>
+      <div class="premline">Annual premium <b>${fmt(prem)} vUSDC</b></div>
+      <div class="acts">
+        <button class="ins" aria-label="Insure robot ${m.name}">Insure</button>
+        <button class="pass" aria-label="Pass on robot ${m.name}">Pass</button>
+      </div>
+      <div class="outcome"></div>`;
+    d.querySelector('.ins').addEventListener('click',()=>decide(m.id,'ins'));
+    d.querySelector('.pass').addEventListener('click',()=>decide(m.id,'pass'));
+    el.appendChild(d);
+  });
+  $('ledger').classList.add('hiddenview');
+  $('nextbar').classList.add('hiddenview');
+  $('run').disabled=true;
+  $('runNote').textContent='Decide on all eight machines first.';
+}
+function decide(id,what){
+  const m=book[id]; if(results.locked)return;
+  m.decision=what;
+  const card=$('m'+id);
+  card.classList.remove('insured','passed');
+  card.classList.add(what==='ins'?'insured':'passed');
+  card.querySelector('.stamp').textContent=what==='ins'?'INSURED':'PASSED';
+  if(book.every(x=>x.decision)){$('run').disabled=false;$('runNote').textContent='Book complete — run the year.';}
+}
+function runYear(){
+  results.locked=true;
+  let prem=0, claims=0;
+  book.forEach(m=>{
+    const card=$('m'+m.id), out=card.querySelector('.outcome');
+    if(m.decision==='ins'){
+      prem+=m.premium;
+      m.claim=simulateClaim(m);
+      claims+=m.claim;
+      out.innerHTML=m.claim>0
+        ?`<span class="claim">Claim paid: −${fmt(m.claim)}</span> · net ${m.premium-m.claim>=0?'+':'−'}${fmt(Math.abs(m.premium-m.claim))}`
+        :`<span class="clean">Clean year</span> · net +${fmt(m.premium)}`;
+    }else{
+      const wouldHave=simulateClaim(m);
+      out.innerHTML=wouldHave>0
+        ?`<span style="color:var(--dimmer)">Passed — it failed elsewhere (−${fmt(wouldHave)} someone else's problem)</span>`
+        :`<span style="color:var(--dimmer)">Passed — it ran clean elsewhere</span>`;
+    }
+  });
+  const pnl=prem-claims, lr=prem>0?Math.round(claims/prem*100):0;
+  balance+=pnl; setBal();
+  $('lPrem').textContent='+'+fmt(prem);
+  $('lClaim').textContent='−'+fmt(claims);
+  $('lPnl').textContent=(pnl>=0?'+':'−')+fmt(Math.abs(pnl));
+  $('lPnl').className=pnl>=0?'lr-good':'lr-bad';
+  $('lLR').textContent=lr+'%';
+  $('lLR').className=lr<100?'lr-good':'lr-bad';
+  results['r'+phase]={pnl,lr};
+  $('ledger').classList.remove('hiddenview');
+  $('nextbar').classList.remove('hiddenview');
+  $('next').textContent=phase===1?'Underwrite Book 2 — with MRS':'See the verdict';
+  $('run').disabled=true;
+  $('runNote').textContent=lr<100?'Profitable book. The market noticed.':'Loss ratio over 100% — the book lost money.';
+}
+function nextPhase(){
+  results.locked=false;
+  if(phase===1){phase=2; book=makeBook(8); renderBook(); window.scrollTo({top:0});}
+  else{
+    $('round').classList.add('hiddenview');
+    $('final').classList.remove('hiddenview');
+    $('f1lr').textContent=results.r1.lr+'%';
+    $('f2lr').textContent=results.r2.lr+'%';
+    $('f1lr').style.color=results.r1.lr<100?'var(--good)':'var(--bad)';
+    $('f2lr').style.color=results.r2.lr<100?'var(--good)':'var(--bad)';
+    $('f1pnl').textContent=(results.r1.pnl>=0?'+':'−')+fmt(Math.abs(results.r1.pnl))+' vUSDC';
+    $('f2pnl').textContent=(results.r2.pnl>=0?'+':'−')+fmt(Math.abs(results.r2.pnl))+' vUSDC';
+    if(results.r2.lr<results.r1.lr)$('fc2').classList.add('win');else $('fc1').classList.add('win');
+    window.scrollTo({top:0});
+  }
+}
+$('start').addEventListener('click',()=>{
+  $('intro').classList.add('hiddenview');
+  $('round').classList.remove('hiddenview');
+  phase=1; book=makeBook(0); renderBook();
+});
+$('run').addEventListener('click',runYear);
+$('next').addEventListener('click',nextPhase);
+$('replay').addEventListener('click',()=>{
+  balance=100000; setBal(); results={}; phase=1; rng=mulberry(Date.now()%100000);
+  $('final').classList.add('hiddenview');
+  $('fc1').classList.remove('win'); $('fc2').classList.remove('win');
+  $('round').classList.remove('hiddenview');
+  book=makeBook(0); renderBook();
+});
+setBal();
+</script>
+</body>
+</html>

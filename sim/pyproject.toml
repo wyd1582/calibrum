@@ -1,0 +1,10 @@
+[project]
+name = "calibrum-sim"
+version = "0.1.0"
+description = "Calibrum underwriting simulation: blind-priced vs MRS-priced insurance books over Monte Carlo years. Everything here is SIMULATION."
+requires-python = ">=3.11"
+dependencies = ["numpy", "matplotlib"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

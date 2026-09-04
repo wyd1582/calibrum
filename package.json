@@ -1,0 +1,21 @@
+{
+  "name": "calibrum",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Calibrum | \u8861\u51c6 \u2014 the financial standard for machines. Monorepo: investor app, Proof of Operation reference implementation, MRS model engine, underwriting simulation.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm --prefix apps/web run dev",
+    "build": "npm --prefix packages/poo run build && npm --prefix apps/web run build",
+    "test": "npm --prefix packages/poo test && npm --prefix apps/web test",
+    "lint": "npm --prefix packages/poo run lint && npm --prefix apps/web run lint",
+    "typecheck": "npm --prefix packages/poo run typecheck && npm --prefix apps/web run typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.33.0"
+}

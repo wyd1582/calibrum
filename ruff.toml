@@ -1,0 +1,7 @@
+line-length = 160
+target-version = "py311"
+# run_mrs_v0.py is the founder's pipeline, ported unchanged on purpose — not linted.
+exclude = ["engine/mrs_v0/run_mrs_v0.py", ".venv", "node_modules", "data"]
+[lint]
+select = ["E", "F", "W"]
+ignore = ["E402", "E501", "E741"]

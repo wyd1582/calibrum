@@ -1,0 +1,26 @@
+{
+  "label": "SIMULATION \u2014 invented hazard curve, not a real book",
+  "years": 10000,
+  "seed": 7,
+  "mrs_floor": 550,
+  "flat": {
+    "mean_lr": 1.5665447500000003,
+    "median_lr": 1.5059635416666666,
+    "p_loss": 0.7264,
+    "lr_p90": 2.6957135416666667
+  },
+  "mrs": {
+    "mean_lr": 1.0407890633265569,
+    "median_lr": 0.9942684766214178,
+    "p_loss": 0.4963,
+    "lr_p90": 1.8124974315255646
+  },
+  "mrs_select": {
+    "mean_lr": 0.6747096008758834,
+    "median_lr": 0.6032712915961647,
+    "p_loss": 0.2772,
+    "lr_p90": 1.5219720646295742
+  },
+  "mrs_beats_flat_share": 0.6842,
+  "mrs_select_beats_flat_share": 0.7933
+}

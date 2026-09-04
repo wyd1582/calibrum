@@ -1,0 +1,47 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  js:
+    name: lint + typecheck + tests (poo, web) + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r lint
+      - run: pnpm -r typecheck
+      - run: pnpm -r test
+      - run: pnpm --filter @calibrum/web build
+      - name: poo sign → tamper → verify must FAIL
+        run: |
+          pnpm --filter @calibrum/poo --silent poo sign -d 5 -o /tmp/r.json
+          pnpm --filter @calibrum/poo --silent poo verify /tmp/r.json
+          pnpm --filter @calibrum/poo --silent poo tamper /tmp/r.json --field context.energy_wh
+          if pnpm --filter @calibrum/poo --silent poo verify /tmp/r.tampered.json; then echo "tampered bundle verified — BUG"; exit 1; fi
+
+  engine:
+    name: smoke backtests on committed fixtures + sim
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pandas numpy scikit-learn matplotlib pytest ruff
+      - run: ruff check engine sim
+      - run: python engine/cohorts/cmapss.py --fd FD001 --sample engine/fixtures/cmapss_fd001_sample.txt --out /tmp/smoke
+      - run: python engine/cohorts/backblaze.py --sample engine/fixtures/backblaze_schema_sample.csv --out /tmp/smoke
+      - run: python engine/cohorts/gpu_alibaba2020.py --sample-dir engine/fixtures/gpu_schema_sample --out /tmp/smoke
+      - run: python -m pytest engine/tests sim -q
+      - name: contract in the app equals the engine output
+        run: python -c "import json; a=json.load(open('engine/mrs_v0/out/mrs_model.json')); assert a['kind']=='logistic_scorecard_v0' and len(a['features'])==43"

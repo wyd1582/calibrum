@@ -1,0 +1,50 @@
+{
+  "name": "@calibrum/poo",
+  "version": "0.1.0",
+  "description": "Proof of Operation (PoO) v0.1 \u2014 Ed25519-signed, hash-chained machine operating receipts with Merkle batching, physics-envelope checks and a chain-agnostic anchor interface. Reference implementation + CLI.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "poo": "./bin/poo.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src test",
+    "poo": "tsx src/cli.ts",
+    "prepare": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "@noble/curves": "^2.0.1",
+    "@noble/hashes": "^2.0.1",
+    "cbor-x": "^1.6.0",
+    "commander": "^14.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.0",
+    "@types/node": "^24.0.0",
+    "@vitest/coverage-v8": "^4.0.0",
+    "eslint": "^9.30.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "typescript-eslint": "^8.40.0",
+    "vitest": "^4.0.0"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}
