@@ -19,11 +19,14 @@ export function Nav() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3">
         <Lockup />
         <nav className="flex items-center gap-1 text-sm">
-          <Link href="/" className={`rounded-md px-3 py-1.5 ${!inApp ? "bg-panel text-ink" : "text-dim hover:text-ink"}`}>
-            Story
+          <Link href="/" className={`rounded-md px-3 py-1.5 ${!inApp && !path.startsWith("/whitepaper") ? "bg-panel text-ink" : "text-dim hover:text-ink"}`}>
+            Overview
           </Link>
           <Link href="/#evidence" className="rounded-md px-3 py-1.5 text-dim hover:text-ink">
             Evidence
+          </Link>
+          <Link href="/whitepaper" className={`rounded-md px-3 py-1.5 ${path.startsWith("/whitepaper") ? "bg-panel text-ink" : "text-dim hover:text-ink"}`}>
+            Whitepaper
           </Link>
           <span className="mx-2 h-5 w-px bg-line" />
           {TABS.map((t) => {
